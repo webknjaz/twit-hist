@@ -56,7 +56,7 @@
             $.getJSON('/api/v.1/'+htag, function(data){
                 $('tbody').html('');
                 $.each(data.results, function(index, t){
-                    $('tbody').append('<tr><td><img src="'+t.image+'" /></td><td>'+t.text+'</td><td>'+t.date+'</td></tr>');
+                    $('tbody').append('<tr><td><a href="https://twitter.com/'+t.author+'"><img src="'+t.image+'" /></a></td><td>'+t.text+'</td><td>'+t.date+'</td></tr>');
                 });
                 $('.search i').removeClass('icon-time').addClass('icon-search');
                 $('#content').show();
@@ -78,7 +78,7 @@
 
     <div id="container">
         <form class="well form-search">
-      <input type="text" placeholder="#tag" class="input-medium search-query typeahead span3" data-provide="typeahead" id="q" name="q" data-source='{{ htags }}' data-items="10" data-provide="typeahead"/>
+      <input type="text" placeholder="#tag" class="input-medium search-query typeahead span3" data-provide="typeahead" id="q" name="q" data-source="{{ htags }}" data-items="10" data-provide="typeahead"/>
        <i class="btn search" ><i class="icon icon-search" ></i>&nbsp;Search</i>
     </form>
     </div>

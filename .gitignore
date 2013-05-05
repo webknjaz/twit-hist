@@ -2,3 +2,6 @@
 *.pot
 *.pyc
 local_settings.py
+env
+env-py3k
+*.tar.gz

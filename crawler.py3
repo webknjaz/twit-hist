@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import json
 import sys
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from datetime import datetime
 import time
 import requests
@@ -33,17 +33,17 @@ class Crawler(object):
         res = {}
         for htag in htags:
             try:
-                print htag
-                url = base_url + urllib.quote(htag)
+                print(htag)
+                url = base_url + urllib.parse.quote(htag)
                 # url = base_url + htag
-                print('fetching ', url)
+                print(('fetching ', url))
                 d = json.loads(requests.get(url).content)
-                print d
+                print(d)
                 raw_tweets = d['results']
                 next_page = d.get('next_page', None)
                 while next_page:
                     url = urllib.basejoin(base_url, next_page)
-                    print('fetching ', url)
+                    print(('fetching ', url))
                     d = json.loads(requests.get(url).content)
                     try:
                         raw_tweets += d['results']
@@ -86,12 +86,12 @@ class Crawler(object):
     def crawl_tweets(self, htag):
         tweets = self.fetch_tweets(htag)
         # tweets = self.fetch_tweets(urllib.unquote(htag))
-        for htag, tweets in tweets.items():
+        for htag, tweets in list(tweets.items()):
             for tweet in tweets:
                 if not self.save_tweet(htag, tweet):
                     break
                 else:
-                    print 'Tweet added:',tweet
+                    print('Tweet added:',tweet)
 
     def graph_data(self, htag, date_from, date_to):
         tweets = self.find_tweets(htag, date_from, date_to)
@@ -100,8 +100,8 @@ class Crawler(object):
             dt = datetime.strptime(t['date'], "%Y-%m-%d %H:%M:%S")
             date = (datetime.now() - dt).days
             res[date] = res.get(date, 0) + 1
-        print res
-        return sorted([[-k, v] for k, v in res.items()])
+        print(res)
+        return sorted([[-k, v] for k, v in list(res.items())])
 
     def htags(self):
         return [_ for _ in self.db.tweet.distinct('htags')]
