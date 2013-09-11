@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
-import json
 import sys
-import urllib.request, urllib.parse, urllib.error
-import http.client
 from datetime import datetime
 import time
 #import requests
+from twython import Twython
 
 from pymongo import Connection
 
@@ -16,9 +14,22 @@ class Crawler(object):
     def __init__(self):
         self.conn = Connection()
         self.db = self.conn.twit
+        self.app_key = 'gnkaxR5nCIkkj64P0Vdlg'
+        self.app_secret = 'GoxnQjhFEmLgEBwEK0jdQuyY8txAkeX1ma4eIwqBbc'
+        self.twi_auth()
+
+    def twi_auth(self):
+        """docstring for twi_auth"""
+        twitter = Twython(self.app_key, self.app_secret, oauth_version=2)
+        self.access_token = twitter.obtain_access_token()
+        self.twitter = Twython(self.app_key, access_token=self.access_token)
 
     def to_datetime(self, string):
-        time_format = '%a, %d %b %Y %H:%M:%S +0000'
+        #time_format = '%a, %d %b %Y %H:%M:%S +0000'
+        time_format = '%a %b %d %H:%M:%S +0000 %Y'
+        # ValueError: time data 'Wed Sep 04 20:53:47 +0000 2013' does not match
+        # format '%a, %d %b %Y %H:%M:%S +0000'
+
         t = time.strptime(string, time_format)
         return datetime(
                 year=t.tm_year,
@@ -29,60 +40,13 @@ class Crawler(object):
                 second=t.tm_sec)
 
     def fetch_tweets(self, htags):
-        base_url = 'http://search.twitter.com/search.json?q='
         res = {}
         print('scaning htags...')
         for htag in htags:
             try:
                 print(htag)
-                url = base_url + urllib.parse.quote(htag)
-                # url = base_url + htag
-                #print(('fetching ', url))
-                #print(requests.get(url).content)
-                #print(urllib.request.urlopen(url).read().decode('utf8'))
-                #d = json.loads(requests.get(url).content)
-                try:
-                    d = json.loads(urllib.request.urlopen(url).read().decode('utf8'))
-                except urllib.error.HTTPError as e:
-                    time.sleep(1)
-                    d = json.loads(urllib.request.urlopen(url).read().decode('utf8'))
-                except (http.client.BadStatusLine, urllib.error.URLError) as e:
-                    time.sleep(5)
-                    d = json.loads(urllib.request.urlopen(url).read().decode('utf8'))
-                except:
-                    continue
-                #print(d)
-                print('.', end='')
-                raw_tweets = d['results']
-                #print(raw_tweets)
-                #if len(raw_tweets) > 0 and not (self.check_tweet(raw_tweets[0]) or self.check_tweet(raw_tweets[-1])):
-                next_page = d.get('next_page', None)
-                while next_page:
-                    print('.', end='')
-                    url = urllib.parse.urljoin(base_url, next_page)
-                    #'?'.join([url,qs])
-                    #print(('fetching ', url))
-                    #d = json.loads(requests.get(url).content)
-                    try:
-                        d = json.loads(urllib.request.urlopen(url).read().decode('utf8'))
-                    #except urllib.error.HTTPError as e:
-                    #    time.sleep(1)
-                    #    d = json.loads(urllib.request.urlopen(url).read().decode('utf8'))
-                    #except (http.client.BadStatusLine, urllib.error.URLError) as e:
-                    #    time.sleep(5)
-                    #    d = json.loads(urllib.request.urlopen(url).read().decode('utf8'))
-                    except:
-                        continue
-                    raw_tweets += d['results']
-                    #print(raw_tweets)
-                    # It's not ideal way of optimization, this cuts lots of tweets:
-                    #if len(d['results']) > 0 and (self.check_tweet(d['results'][0]) or self.check_tweet(d['results'][-1])):
-                    #    break
-                    next_page = d.get('next_page', None)
-                    # next_page = None
-                    # for tweet in raw_tweets:
-                    #     self.save_tweet(htag, tweet)
-                res[htag] = raw_tweets
+                res[htag] = [_ for _ in self.twitter.search_gen(htag)]
+                print(res[htag])
                 print()
                 #print(res)
                 print('{tag} fetched...'.format(tag=htag))
@@ -98,11 +62,11 @@ class Crawler(object):
             return False
 
     def save_tweet(self, htag, tweet):
-        tweet_data = {'htags': [htag],
+        tweet_data = {'htags': [htag] + tweet['entities']['hashtags'],
                       'id': tweet['id'],
                       'datetime': self.to_datetime(tweet['created_at']),
-                      'from_user': tweet['from_user'],
-                      'profile_image_url': tweet['profile_image_url'],
+                      'from_user': tweet['user']['screen_name'],
+                      'profile_image_url': tweet['user']['profile_image_url'],
                       'text': tweet['text'],
                       'raw': tweet}
         db_tweet = self.check_tweet(tweet)
@@ -141,7 +105,6 @@ class Crawler(object):
 
     def crawl_tweets(self, htag):
         tweets = self.fetch_tweets(htag)
-        # tweets = self.fetch_tweets(urllib.unquote(htag))
         for htag, tweets in list(tweets.items()):
             print(htag)
             for tweet in tweets:
@@ -177,7 +140,6 @@ def main(tags=[]):
     crawler = Crawler()
     if not tags:
         tags = crawler.htags()
-    tweets = crawler.fetch_tweets(tags)
     crawler.crawl_tweets(tags)
 
 if __name__ == '__main__':
