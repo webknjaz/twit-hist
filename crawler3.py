@@ -5,14 +5,14 @@ import time
 #import requests
 from twython import Twython
 
-from pymongo import Connection
+import motor
 
 # import data
 
 
 class Crawler(object):
     def __init__(self):
-        self.conn = Connection()
+        self.conn = motor.MotorClient().open_sync()
         self.db = self.conn.twit
         self.app_key = 'gnkaxR5nCIkkj64P0Vdlg'
         self.app_secret = 'GoxnQjhFEmLgEBwEK0jdQuyY8txAkeX1ma4eIwqBbc'
