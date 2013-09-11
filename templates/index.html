@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Twit hipster</title>
@@ -8,11 +9,11 @@
     <script type="text/javascript" src="/static/js/highcharts.js" ></script>
 
     <style type="text/css">
-        #container form {
+        /*#container form {
             padding-left: 400px;
-        }
-        #container form input {
-            width: 300px;
+        }*/
+        .container-fluid form input {
+            /*width: 300px;*/
             height: 35px;
         }
         .show-graph {
@@ -76,11 +77,13 @@
 
 <body>
 
-    <div id="container">
-        <form class="well form-search">
-      <input type="text" placeholder="#tag" class="input-medium search-query typeahead span3" data-provide="typeahead" id="q" name="q" data-source="{{ htags }}" data-items="10" data-provide="typeahead"/>
-       <i class="btn search" ><i class="icon icon-search" ></i>&nbsp;Search</i>
-    </form>
+    <div class="container-fluid well">
+        <div class="offset3 span6">
+            <form class="form-search">
+                <input type="text" placeholder="#tag" class="input-medium search-query typeahead span5" data-provide="typeahead" id="q" name="q" data-source="{{ htags }}" data-items="10" data-provide="typeahead"/>
+                <i class="btn search span1" ><i class="icon icon-search" ></i>&nbsp;Search</i>
+            </form>
+        </div>
     </div>
     
     <div id="content">
