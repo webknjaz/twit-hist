@@ -39,7 +39,8 @@ class HomeHandler(tornado.web.RequestHandler):
         htags = c.htags()
         del c
         logging.info(htags)
-        self.render('index.html', **{'htags': json.dumps(sorted(htags))})
+        #self.render('index.html', **{'htags': json.dumps(sorted(htags))})
+        self.render('index.html', **{'htags': json.dumps(htags)})
         del htags
 
 class wkHandler(tornado.web.RequestHandler):
