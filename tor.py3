@@ -6,6 +6,7 @@ import tornado.ioloop
 import tornado.web
 import json
 import crawler3
+import logging
 
 FROM = datetime(2000, 1, 1)
 TO = datetime(2100, 1, 1)
@@ -37,6 +38,7 @@ class HomeHandler(tornado.web.RequestHandler):
         c = crawler3.Crawler()
         htags = c.htags()
         del c
+        logging.info(htags)
         self.render('index.html', **{'htags': json.dumps(sorted(htags))})
         del htags
 
