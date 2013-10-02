@@ -62,7 +62,7 @@ class Crawler(object):
             return False
 
     def save_tweet(self, htag, tweet):
-        tweet_data = {'htags': [htag] + tweet['entities']['hashtags'],
+        tweet_data = {'htags': [htag] + ['#{0}'.format(ht['text']) for ht in tweet['entities']['hashtags']],
                       'id': tweet['id'],
                       'datetime': self.to_datetime(tweet['created_at']),
                       'from_user': tweet['user']['screen_name'],
