@@ -32,12 +32,12 @@ class Crawler(object):
 
         t = time.strptime(string, time_format)
         return datetime(
-                year=t.tm_year,
-                month=t.tm_mon,
-                day=t.tm_mday,
-                hour=t.tm_hour,
-                minute=t.tm_min,
-                second=t.tm_sec)
+            year=t.tm_year,
+            month=t.tm_mon,
+            day=t.tm_mday,
+            hour=t.tm_hour,
+            minute=t.tm_min,
+            second=t.tm_sec)
 
     def fetch_tweets(self, htags):
         res = {}
@@ -62,26 +62,37 @@ class Crawler(object):
             return False
 
     def save_tweet(self, htag, tweet):
-        tweet_data = {'htags': [htag] + ['#{0}'.format(ht['text']) for ht in tweet['entities']['hashtags']],
-                      'id': tweet['id'],
-                      'datetime': self.to_datetime(tweet['created_at']),
-                      'from_user': tweet['user']['screen_name'],
-                      'profile_image_url': tweet['user']['profile_image_url'],
-                      'text': tweet['text'],
-                      'raw': tweet}
+        tweet_data = {
+            'htags': [htag] + [
+                '#{0}'.format(ht['text'])
+                for ht in tweet['entities']['hashtags']
+            ],
+            'id': tweet['id'],
+            'datetime': self.to_datetime(tweet['created_at']),
+            'from_user': tweet['user']['screen_name'],
+            'profile_image_url': tweet['user']['profile_image_url'],
+            'text': tweet['text'],
+            'raw': tweet
+        }
         db_tweet = self.check_tweet(tweet)
         #print(db_tweet)
         if not db_tweet:
             try:
                 self.db.tweet.insert(tweet_data)
-                print('''
-                             ID: {id}
-                         Author: @{author}
-                          Tweet: {tweet}
-                        Written: {when}
-                        '''
-                        .format(id = tweet['id'], author = tweet['from_user'], tweet = tweet['text'], when = self.to_datetime(tweet['created_at']))
-                        )
+                print(
+                    '''
+                            ID: {id}
+                        Author: @{author}
+                        Tweet: {tweet}
+                    Written: {when}
+                    '''
+                    .format(
+                        id=tweet['id'],
+                        author=tweet['from_user'],
+                        tweet=tweet['text'],
+                        when=self.to_datetime(tweet['created_at'])
+                    )
+                )
                 return True
             except:
                 pass
@@ -90,7 +101,7 @@ class Crawler(object):
         else:
             return False
 
-    def find_tweets(self, htag, date_from, date_to, lim = None):
+    def find_tweets(self, htag, date_from, date_to, lim=None):
         dt_from = {'datetime': {'$gte': date_from}}
         dt_to = {'datetime': {'$lte': date_to}}
         query = {'htags': htag,
