@@ -11,12 +11,13 @@ from pymongo import Connection
 
 
 class Crawler(object):
-    def __init__(self):
+    def __init__(self, noTwi=False):
         self.conn = Connection()
         self.db = self.conn.twit
         self.app_key = 'gnkaxR5nCIkkj64P0Vdlg'
         self.app_secret = 'GoxnQjhFEmLgEBwEK0jdQuyY8txAkeX1ma4eIwqBbc'
-        self.twi_auth()
+        if not noTwi:
+            self.twi_auth()
 
     def twi_auth(self):
         """docstring for twi_auth"""
@@ -40,6 +41,7 @@ class Crawler(object):
             second=t.tm_sec)
 
     def fetch_tweets(self, htags):
+        assert self.twitter is not None, 'Twitter API is disabled!'
         res = {}
         print('scaning htags...')
         for htag in htags:

@@ -31,7 +31,7 @@ class MainHandler(tornado.web.RequestHandler):
 
 class GraphHandler(tornado.web.RequestHandler):
     def get(self, htag):
-        c = crawler3.Crawler()
+        c = crawler3.Crawler(noTwi=True)
         data = c.graph_data(htag, FROM, TO)
         del c
         # data = [
@@ -47,7 +47,7 @@ class GraphHandler(tornado.web.RequestHandler):
 
 class HomeHandler(tornado.web.RequestHandler):
     def get(self):
-        c = crawler3.Crawler()
+        c = crawler3.Crawler(noTwi=True)
         htags = c.htags()
         del c
         logging.info(htags)
