@@ -78,7 +78,7 @@ application = tornado.web.Application([
 ], **settings)
 
 if __name__ == "__main__":
-    application.listen(8888)
+    application.listen(8888, address='127.0.0.1')
     ioloop = tornado.ioloop.IOLoop.instance()
     tornado.autoreload.watch(static_path)
     tornado.autoreload.watch('templates/index.html')
