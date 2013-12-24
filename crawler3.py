@@ -45,23 +45,24 @@ class Crawler(object):
         assert self.twitter is not None, 'Twitter API is disabled!'
 
         def get_tweets_from_api(htag):
-            print(htag)
+            #print(htag)
             r = [_ for _ in self.twitter.search_gen(htag)]
-            print(r)
-            print()
+            #print(r)
+            #print()
             #print(res)
-            print('{tag} fetched...'.format(tag=htag))
+            #print('{tag} fetched...'.format(tag=htag))
             return r
 
         res = {}
-        print('scaning htags...')
+        #print('scaning htags...')
         rate_limit = {}
         for htag in htags:
             rate_limit = self.twitter\
                 .get_application_rate_limit_status(resources='search')[
                     'resources']['search']['/search/tweets']
-            print(rate_limit)
-            if rate_limit['remaining'] < 1 and rate_limit['reset'] > time.time():
+            #print(rate_limit)
+            if rate_limit['remaining'] < 1 and \
+                    rate_limit['reset'] > time.time():
                 time.sleep(rate_limit['reset'] - time.time())
 
             try:
@@ -70,13 +71,13 @@ class Crawler(object):
                 rate_limit = self.twitter\
                     .get_application_rate_limit_status(resources='search')[
                         'resources']['search']['/search/tweets']
-                print('Rate limit: {0}'.format(rate_limit))
-                print(e)
+                #print('Rate limit: {0}'.format(rate_limit))
+                #print(e)
                 if rate_limit['reset'] > time.time():
                     time.sleep(rate_limit['reset'] - time.time())
                 res[htag] = get_tweets_from_api(htag)
             except e:
-                print(e)
+                #print(e)
                 pass
         return res
 
@@ -101,39 +102,39 @@ class Crawler(object):
             'raw': tweet
         }
         db_tweet = self.check_tweet(tweet)
-        print(db_tweet)
+        #print(db_tweet)
         if not db_tweet:
             try:
                 self.db.tweet.insert(tweet_data)
-                print('Tweet was recorded')
+                #print('Tweet was recorded')
                 for ht in tweet_data['htags']:
                     self.db.meta.insert({
                         'hashtag': ht
                     })
-                print('Hashtags saved')
-                print(tweet_data)
-                print(
-                    '''
-                            ID: {id}
-                        Author: @{author}
-                        Tweet: {tweet}
-                    Written: {when}
-                    '''
-                    .format(
-                        id=tweet['id'],
-                        author=tweet['from_user'],
-                        tweet=tweet['text'],
-                        when=self.to_datetime(tweet['created_at'])
-                    )
-                )
+                #print('Hashtags saved')
+                #print(tweet_data)
+                #print(
+                #    '''
+                #            ID: {id}
+                #        Author: @{author}
+                #        Tweet: {tweet}
+                #    Written: {when}
+                #    '''
+                #    .format(
+                #        id=tweet['id'],
+                #        author=tweet['from_user'],
+                #        tweet=tweet['text'],
+                #        when=self.to_datetime(tweet['created_at'])
+                #    )
+                #)
                 return True
             except:
-                print('An exception raised')
+                #print('An exception raised')
                 pass
             finally:
                 return True
         else:
-            print('Tweet was not recorded')
+            #print('Tweet was not recorded')
             return False
 
     def find_tweets(self, htag, date_from, date_to, lim=None):
@@ -155,8 +156,8 @@ class Crawler(object):
             #print(htag)
             for tweet in tweets:
                 if not self.save_tweet(htag, tweet):
-                    print('Tweet skipped...')
-                    print(tweet)
+                    #print('Tweet skipped...')
+                    #print(tweet)
                     pass
                     #break
                 else:
