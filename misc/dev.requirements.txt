@@ -1,0 +1,16 @@
+-r requirements.txt
+
+Cython==0.19.2
+cffi==0.7.2
+ctypes-configure==0.1
+greenlet==0.4.1
+ipython==1.1.0
+motor==0.1.1
+oauthlib==0.5.1
+py==1.4.15
+pycparser==2.10
+pygdb2==0.1
+requests==1.2.3
+requests-oauthlib==0.3.2
+signal2==0.2
+zmqpy==0.3.2
