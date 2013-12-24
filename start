@@ -1,3 +1,0 @@
-#!/bin/sh
-
-cherryd -i twit_hist -P /var/www/twit-hist/ -c /var/www/twit-hist/twit_hist.conf $*
