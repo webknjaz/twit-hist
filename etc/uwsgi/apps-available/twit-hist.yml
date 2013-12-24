@@ -1,0 +1,12 @@
+uwsgi:
+    virtualenv: /var/www/twit-hist/env-3.3/
+    chdir: /var/www/twit-hist
+    uid: webknjaz
+    gid: twit-hist
+    socket: /var/run/uwsgi/app/twit-hist/socket
+    chmod: 666 
+    #http: 0.0.0.0:4040
+    module: wsgi
+    master: 1
+    processes: 8
+    memory-report: 1
