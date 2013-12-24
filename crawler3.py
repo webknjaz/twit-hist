@@ -4,6 +4,7 @@ from datetime import datetime
 import time
 #import requests
 from twython import Twython
+from twython.exceptions import TwythonRateLimitError
 
 from pymongo import Connection
 
@@ -42,17 +43,40 @@ class Crawler(object):
 
     def fetch_tweets(self, htags):
         assert self.twitter is not None, 'Twitter API is disabled!'
+
+        def get_tweets_from_api(htag):
+            print(htag)
+            r = [_ for _ in self.twitter.search_gen(htag)]
+            print(r)
+            print()
+            #print(res)
+            print('{tag} fetched...'.format(tag=htag))
+            return r
+
         res = {}
         print('scaning htags...')
+        rate_limit = {}
         for htag in htags:
+            rate_limit = self.twitter\
+                .get_application_rate_limit_status(resources='search')[
+                    'resources']['search']['/search/tweets']
+            print(rate_limit)
+            if rate_limit['remaining'] < 1 and rate_limit['reset'] > time.time():
+                time.sleep(rate_limit['reset'] - time.time())
+
             try:
-                print(htag)
-                res[htag] = [_ for _ in self.twitter.search_gen(htag)]
-                print(res[htag])
-                print()
-                #print(res)
-                print('{tag} fetched...'.format(tag=htag))
-            except:
+                res[htag] = get_tweets_from_api(htag)
+            except TwythonRateLimitError as e:
+                rate_limit = self.twitter\
+                    .get_application_rate_limit_status(resources='search')[
+                        'resources']['search']['/search/tweets']
+                print('Rate limit: {0}'.format(rate_limit))
+                print(e)
+                if rate_limit['reset'] > time.time():
+                    time.sleep(rate_limit['reset'] - time.time())
+                res[htag] = get_tweets_from_api(htag)
+            except e:
+                print(e)
                 pass
         return res
 
