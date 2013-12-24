@@ -77,10 +77,17 @@ class Crawler(object):
             'raw': tweet
         }
         db_tweet = self.check_tweet(tweet)
-        #print(db_tweet)
+        print(db_tweet)
         if not db_tweet:
             try:
                 self.db.tweet.insert(tweet_data)
+                print('Tweet was recorded')
+                for ht in tweet_data['htags']:
+                    self.db.meta.insert({
+                        'hashtag': ht
+                    })
+                print('Hashtags saved')
+                print(tweet_data)
                 print(
                     '''
                             ID: {id}
@@ -97,10 +104,12 @@ class Crawler(object):
                 )
                 return True
             except:
+                print('An exception raised')
                 pass
             finally:
                 return True
         else:
+            print('Tweet was not recorded')
             return False
 
     def find_tweets(self, htag, date_from, date_to, lim=None):
@@ -119,15 +128,17 @@ class Crawler(object):
     def crawl_tweets(self, htag):
         tweets = self.fetch_tweets(htag)
         for htag, tweets in list(tweets.items()):
-            print(htag)
+            #print(htag)
             for tweet in tweets:
                 if not self.save_tweet(htag, tweet):
                     print('Tweet skipped...')
+                    print(tweet)
                     pass
                     #break
                 else:
                     #print('Tweet added:',tweet)
-                    print('Tweet added...')
+                    #print('Tweet added...')
+                    pass
                 #print(tweet)
 
     def graph_data(self, htag, date_from, date_to):
@@ -141,6 +152,8 @@ class Crawler(object):
         return sorted([[-k, v] for k, v in list(res.items())])
 
     def htags(self):
+        return [_['hashtag'] for _ in self.db.meta.find()]
+        return (x['htags'] for x in self.db.tweet.find({}, {'htags': 1}))
         return [_ for _ in self.db.tweet.distinct('htags')]
 
     def ensure_indexes(self):
