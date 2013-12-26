@@ -12,30 +12,58 @@
         /*#container form {
             padding-left: 400px;
         }*/
+        .center-clear {
+            float: none;
+            margin: auto;
+        }
+
+        .tweets-table td:last-child {
+            text-align: right;
+        }
+
+        .tweets-table th {
+            text-align: center;
+        }
+
+        .tweets-table th:first-child {
+            text-align: left;
+        }
+
+        .container-fluid {
+            text-align: center;
+        }
         .container-fluid form input {
             /*width: 300px;*/
-            height: 35px;
+            height: 35px;            
+            font-size: 12pt;
+            padding: 0 10px;
         }
         .show-graph {
-            width: 90%;
+            margin: 10px 5px 14px 5px;
             text-align: center;
             color: #fff;
-            padding: 5px 4px;
+            padding: 8px 4px;
             font-size: 1.5em;
             background-color: #0D5995;
             border-radius: 5px;
-            margin-left: 50px;
-            margin-bottom: 20px;
         }
         .show-graph:hover {
             cursor: pointer;
         }
         #graf {
             width: 100%;
+            margin-bottom: 15px;
         }
         #content {
             display: none;
+            text-align: center;
         }
+
+        .input-search-query {
+            font-size: 12pt;
+            padding: 0px 10px;
+        }
+
     </style>
 
     <script type="text/javascript">
@@ -77,17 +105,17 @@
 
 <body>
 
-    <div class="container-fluid well">
-        <div class="offset3 span6">
-            <form class="form-search">
-                <input type="text" placeholder="#tag" class="input-medium search-query typeahead span5" data-provide="typeahead" id="q" name="q" data-source="{{ htags }}" data-items="10" data-provide="typeahead"/>
-                <i class="btn search span1" ><i class="icon icon-search" ></i>&nbsp;Search</i>
+    <div class="container-fluid well well-small">
+        <div class="span10 center-clear">
+            <form class="form-search" style="margin: 0;">
+                <input type="text" placeholder="#tag" class="input-medium search-query typeahead span6" data-provide="typeahead" id="q" name="q" data-source="[]" data-items="10">
+                <i class="btn search span1" style="float: none;"><i class="icon icon-search"></i>&nbsp;Search</i>
             </form>
         </div>
     </div>
     
     <div id="content">
-        <div class="offset1 span12">
+        <div class="span10 center-clear">
             <div class="show-graph">Show graph</div>
             <div id="graf" style="width: 100%; display: none"></div>
             <div id="annual">
@@ -95,18 +123,18 @@
     
     </div>
 
-    <div class="offset1 span12">
-      <table class="table table-condensed">
+    <div class="span10 center-clear">
+      <table class="table table-condensed tweets-table">
         <colgroup>
-          <col class="span3">   
-          <col class="span6">
-          <col class="span3">
+          <col class="span3" style="width: 80px">   
+          <col class="span6" >
+          <col class="span3" style="width: 80px">
         </colgroup>
         <thead>
           <tr>
             <th>User</th>
-            <th>Tag</th>
             <th>Tweet</th>
+            <th>Date</th>
           </tr>
         </thead>
         <tbody>
@@ -122,7 +150,7 @@
             chart: {
                 renderTo: 'graf',
                 type: 'spline',
-                width: 940
+                width: 780
                 // zoomType: 'xy'
             },
             title: {
