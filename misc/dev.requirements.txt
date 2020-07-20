@@ -10,7 +10,7 @@ oauthlib==0.5.1
 py==1.4.15
 pycparser==2.10
 pygdb2==0.1
-requests==1.2.3
+requests==2.20.0
 requests-oauthlib==0.3.2
 signal2==0.2
 zmqpy==0.3.2
